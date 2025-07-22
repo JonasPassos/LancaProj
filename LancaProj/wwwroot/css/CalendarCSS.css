@@ -1,0 +1,244 @@
+﻿@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap');
+
+/* Corpo e fundo animado */
+body, html {
+    margin: 0;
+    padding: 0;
+    background: url('/Images/giphy.gif') no-repeat center center fixed;
+    background-size: cover;
+    color: white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow-x: hidden;
+    height: 100%;
+}
+
+/* Título centralizado com fonte futurista */
+h2 {
+    font-family: 'Orbitron', sans-serif;
+    color: #73b4ff;
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* Estrelas (opcional) */
+canvas#stars {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* Container do calendário com fundo transparente */
+.calendar-container {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: rgba(18, 18, 31, 0.4);
+    border-radius: 15px;
+    border: 1px solid white;
+    box-shadow: 0 0 30px rgba(0, 123, 255, 0.3);
+    backdrop-filter: blur(6px);
+}
+
+/* Cabeçalho */
+.calendar-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 20px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 26px;
+    color: #73b4ff;
+}
+
+    .calendar-header button {
+        background-color: transparent;
+        border: none;
+        font-size: 24px;
+        color: #73b4ff;
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+
+        .calendar-header button:hover {
+            transform: scale(1.2);
+        }
+
+/* Dias da semana e calendário */
+.weekdays, .calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    gap: 5px;
+}
+
+    .weekdays div {
+        font-weight: bold;
+        padding: 10px 0;
+        color: #b3d1ff;
+    }
+
+/* Células dos dias */
+.day {
+    background-color: rgba(27, 27, 47, 0.5);
+    border: 1px solid white;
+    border-radius: 8px;
+    padding: 10px;
+    height: 100px;
+    overflow-y: auto;
+    cursor: pointer;
+    transition: 0.3s;
+    position: relative;
+}
+
+    .day:hover {
+        background-color: rgba(34, 34, 64, 0.6);
+    }
+
+.day-number {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.day-content {
+    font-size: 12px;
+}
+
+/* Destaques por cor (legado, pode ser removido se não usar) */
+.highlight-yellow {
+    background-color: #ffe100;
+    color: black;
+    padding: 2px 4px;
+    border-radius: 4px;
+    font-weight: bold;
+    display: inline-block;
+}
+
+.highlight-blue {
+    background-color: #007bff;
+    color: white;
+    padding: 2px 4px;
+    border-radius: 4px;
+    font-weight: bold;
+    display: inline-block;
+}
+
+.highlight-red {
+    background-color: #dc3545;
+    color: white;
+    padding: 2px 4px;
+    border-radius: 4px;
+    font-weight: bold;
+    display: inline-block;
+}
+
+/* Botões */
+.botoes-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin: 30px 0;
+}
+
+.btn-custom {
+    display: inline-block;
+    min-width: 120px;
+    text-align: center;
+    padding: 12px 20px;
+    background-color: transparent;
+    border: 2px solid #007bff;
+    color: #007bff;
+    border-radius: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.4);
+}
+
+    .btn-custom:hover {
+        background-color: #007bff;
+        color: white;
+    }
+
+/* Modal */
+#eventModal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+    #eventModal form {
+        background-color: rgba(0, 0, 0, 0.8);
+        padding: 30px;
+        border-radius: 10px;
+        color: white;
+        width: 100%;
+        max-width: 500px;
+        box-shadow: 0 0 15px rgba(0, 123, 255, 0.5);
+        position: relative;
+        border: 1px solid white;
+        backdrop-filter: blur(4px);
+    }
+
+    #eventModal label {
+        display: block;
+        margin-top: 10px;
+        font-weight: bold;
+    }
+
+    #eventModal input,
+    #eventModal select {
+        width: 100%;
+        padding: 8px;
+        margin-top: 4px;
+        border-radius: 5px;
+        border: 1px solid white;
+        background-color: #1a1a1a;
+        color: white;
+    }
+
+        #eventModal input[disabled] {
+            background-color: #333;
+            color: #aaa;
+        }
+
+/* Cores dos eventos */
+.evento-amarelo {
+    background-color: #f1c40f;
+    color: #000;
+    padding: 2px 4px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-top: 2px;
+}
+
+.evento-azul {
+    background-color: #3498db;
+    color: #fff;
+    padding: 2px 4px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-top: 2px;
+}
+
+.evento-vermelho {
+    background-color: #e74c3c;
+    color: #fff;
+    padding: 2px 4px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-top: 2px;
+}

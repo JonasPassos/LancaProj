@@ -1,0 +1,48 @@
+﻿@page
+@model LancaProj.Pages.LancaTable.EditModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Adm</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Adm.ID" />
+            <div class="form-group">
+                
+                <label asp-for="Adm.Nome" class="control-label"></label>
+                <input asp-for="Adm.Nome" class="form-control" />
+                <span asp-validation-for="Adm.Nome" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                
+                <label asp-for="Adm.Funcao" class="control-label"></label>
+                <input asp-for="Adm.Funcao" class="form-control" />
+                <span asp-validation-for="Adm.Funcao" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+
+                <label asp-for="Adm.Dia" class="control-label"></label>
+                <input asp-for="Adm.Dia" class="form-control" />
+                <span asp-validation-for="Adm.Dia" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Salvar" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="./Index">Voltar para lista</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

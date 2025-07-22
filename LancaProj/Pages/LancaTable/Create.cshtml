@@ -1,0 +1,44 @@
+﻿@page
+@model LancaProj.Pages.LancaTable.CreateModel
+
+        @{
+        ViewData["Title"] = "Criar funcionário";
+        }
+        
+        <h1>Criar</h1>
+        
+    <h4>Funcionários</h4>
+    <hr />
+    <div class="row">
+    <div class="col-md-4">
+    <form method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Adm.Nome" class="control-label"></label>
+                <input asp-for="Adm.Nome" class="form-control" />
+                <span asp-validation-for="Adm.Nome" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Adm.Funcao" class="control-label"></label>
+                <input asp-for="Adm.Funcao" class="form-control" />
+                <span asp-validation-for="Adm.Funcao" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Adm.Dia" class="control-label"></label>
+                <input asp-for="Adm.Dia" class="form-control" />
+                <span asp-validation-for="Adm.Dia" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Novo" class="btn btn-primary" style="margin-top: 10px;" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="Index" class="btn btn-primary" style="margin-top: 5px;">Voltar</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

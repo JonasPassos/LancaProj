@@ -1,0 +1,183 @@
+﻿@page
+@model LancaProj.Pages.CalendarModel
+@using Newtonsoft.Json
+@{
+    Layout = null;
+}
+
+<link rel="stylesheet" href="~/css/CalendarCSS.css" asp-append-version="true" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<body>
+    <canvas id="starfield"></canvas>
+    <h2 class="title" style="text-align: center">Escala Joker 2025</h2>
+
+    <div id="calendar-container" class="calendar-container">
+        <div class="calendar-header">
+            <button onclick="changeMonth(-1)">&#8592;</button>
+            <h2 id="monthYearTitle"></h2>
+            <button onclick="changeMonth(1)">&#8594;</button>
+        </div>
+
+        <div class="weekdays">
+            <div>Domingo</div><div>Segunda</div><div>Terça</div>
+            <div>Quarta</div><div>Quinta</div><div>Sexta</div><div>Sábado</div>
+        </div>
+
+        <div id="calendar-days" class="calendar-days"></div>
+
+        <div class="botoes-container">
+            <a href="@Url.Page("/LancaTable/index")" class="btn-custom">Voltar</a>
+            <button onclick="tirarPrint()" class="btn-custom">Baixar</button>
+        </div>
+    </div>
+
+    <div id="eventModal">
+        <form method="post" asp-page-handler="SaveHorario">
+            <h3>Adicionar Evento</h3>
+            <input type="hidden" id="modalDate" name="NovoHorario.DataEvento" />
+
+            <label>Funcionário:</label>
+            <select name="FuncionarioSelecionadoId" required>
+                <option value="">Selecione...</option>
+                @foreach (var item in Model.ListaFuncionarios)
+                {
+                    <option value="@item.Value">@item.Text</option>
+                }
+            </select>
+
+            <label>Folga:</label>
+            <select id="folga" name="NovoHorario.FunFolga" onchange="toggleHorarios()" required>
+                <option value="false">Não</option>
+                <option value="true">Sim</option>
+            </select>
+
+            <div class="horarios">
+                <label>Entrada:</label>
+                <input type="time" name="NovoHorario.FunEntrada" />
+
+                <label>Pausa:</label>
+                <input type="time" name="NovoHorario.FunPausa" />
+
+                <label>Volta:</label>
+                <input type="time" name="NovoHorario.FunVolta" />
+
+                <label>Saída:</label>
+                <input type="time" name="NovoHorario.FunSaida" />
+            </div>
+
+            <label>Cor:</label>
+            <select name="NovoHorario.Cor" required>
+                <option value="amarelo">Amarelo</option>
+                <option value="azul">Azul</option>
+                <option value="vermelho">Vermelho</option>
+            </select>
+
+            <div class="botoes-container">
+                <button type="submit" class="btn-custom">Salvar</button>
+                <button type="button" class="btn-custom" onclick="fecharModal()">Cancelar</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        let currentDate = new Date();
+        const monthNames = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+
+        const eventosDoBanco = @Html.Raw(JsonConvert.SerializeObject(
+            Model.HorariosDoCalendario.Select(h => new {
+                h.ID,
+                h.Adm.Nome,
+                h.DataEvento,
+                h.FunFolga,
+                Entrada = h.FunEntrada?.ToString(@"hh\:mm"),
+                Pausa = h.FunPausa?.ToString(@"hh\:mm"),
+                Volta = h.FunVolta?.ToString(@"hh\:mm"),
+                Saida = h.FunSaida?.ToString(@"hh\:mm"),
+                Cor = h.Cor
+            })
+        ));
+
+        const eventos = {};
+        eventosDoBanco.forEach(e => {
+            const dateKey = e.DataEvento.split("T")[0];
+            (eventos[dateKey] ||= []).push(e);
+        });
+
+        function generateCalendar(date) {
+            const year = date.getFullYear(), month = date.getMonth();
+            document.getElementById("monthYearTitle").textContent = `${monthNames[month]} ${year}`;
+
+            const daysEl = document.getElementById("calendar-days");
+            daysEl.innerHTML = "";
+
+            const first = new Date(year, month, 1).getDay();
+            const total = new Date(year, month + 1, 0).getDate();
+
+            for (let i = 0; i < first; i++) daysEl.appendChild(createEmpty());
+            for (let d = 1; d <= total; d++) daysEl.appendChild(createDay(d, year, month));
+        }
+
+        function createEmpty() {
+            const div = document.createElement("div");
+            div.className = "day other-month";
+            return div;
+        }
+
+        function createDay(day, year, month) {
+            const date = `${year}-${String(month+1).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
+            const div = document.createElement("div");
+            div.className = "day";
+            div.onclick = () => abrirModal(date);
+
+            const num = document.createElement("div");
+            num.className = "day-number";
+            num.textContent = day;
+
+            const content = document.createElement("div");
+            content.className = "day-content";
+
+            (eventos[date] || []).forEach(ev => {
+                const p = document.createElement("p");
+                p.className = `evento-${ev.Cor}`;
+                p.textContent = ev.FunFolga
+                    ? `${ev.Nome} | Folga`
+                    : `${ev.Nome} | ${ev.Entrada || ""} - ${ev.Pausa || ""} - ${ev.Volta || ""} - ${ev.Saida || ""}`;
+                content.appendChild(p);
+            });
+
+            div.append(num, content);
+            return div;
+        }
+
+        function abrirModal(dateStr) {
+            document.getElementById("modalDate").value = dateStr;
+            document.getElementById("eventModal").style.display = "flex";
+        }
+
+        function fecharModal() {
+            document.getElementById("eventModal").style.display = "none";
+        }
+
+        function toggleHorarios() {
+            const folga = document.getElementById("folga").value;
+            document.querySelector(".horarios").style.display = folga === "true" ? "none" : "block";
+        }
+
+        function changeMonth(offset) {
+            currentDate.setMonth(currentDate.getMonth() + offset);
+            generateCalendar(currentDate);
+        }
+
+        function tirarPrint() {
+            html2canvas(document.getElementById("calendar-container")).then(canvas => {
+                const a = document.createElement("a");
+                a.href = canvas.toDataURL();
+                a.download = "calendario.png";
+                a.click();
+            });
+        }
+
+        generateCalendar(currentDate);
+    </script>
+</body>
